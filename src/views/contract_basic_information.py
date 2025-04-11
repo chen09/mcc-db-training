@@ -1,0 +1,72 @@
+from datetime import datetime
+from sqlalchemy import Column, String, Integer, DateTime, func, ForeignKey
+from sqlalchemy.orm import relationship
+from src.models.base import BaseModel
+
+class ViewContractBasicInformation(BaseModel):
+    """合同基本信息视图"""
+    __tablename__ = "view_contract_basic_information"
+    __table_args__ = {'info': {'is_view': True}}
+
+    contract_number = Column(String, primary_key=True)
+    contract_status = Column(Integer, nullable=False)
+    service_id = Column(Integer, nullable=True)
+    usage_start_date = Column(DateTime(timezone=True), nullable=True)
+    usage_end_date = Column(DateTime(timezone=True), nullable=True)
+    desired_start_date = Column(DateTime(timezone=True), nullable=True)
+    scheduled_end_date = Column(DateTime(timezone=True), nullable=True)
+    latest_apply_number = Column(String, nullable=True)
+    bill_to_company_code = Column(String, nullable=True)
+    bill_to_company_name = Column(String, nullable=True)
+    invoice_address_company_code = Column(String, nullable=True)
+    invoice_address_company_name = Column(String, nullable=True)
+    cost_center_code = Column(String, nullable=True)
+    cost_center_name = Column(String, nullable=True)
+    remarks = Column(String, nullable=True)
+    versatile_remarks1 = Column(String, nullable=True)
+    versatile_remarks2 = Column(String, nullable=True)
+    versatile_remarks3 = Column(String, nullable=True)
+    versatile_remarks4 = Column(String, nullable=True)
+    versatile_remarks5 = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False)
+    created_by = Column(String, nullable=False)
+    created_pg_id = Column(String, nullable=False)
+    updated_at = Column(DateTime(timezone=True), nullable=False)
+    updated_by = Column(String, nullable=False)
+    updated_pg_id = Column(String, nullable=False)
+    version = Column(Integer, nullable=False)
+    service_caption_id = Column(Integer, nullable=True)
+    apply_component_key = Column(String, nullable=True)
+    service_name = Column(String, nullable=True)
+    language = Column(String, nullable=True)
+    user_oa_number = Column(String, nullable=True)
+    user_name = Column(String, nullable=True)
+    user_name_roma = Column(String, nullable=True)
+    user_mailaddress = Column(String, nullable=True)
+    user_company_code = Column(String, nullable=True)
+    user_company_name = Column(String, nullable=True)
+    user_company_name_en = Column(String, nullable=True)
+    user_organization_code = Column(String, nullable=True)
+    user_organization_name = Column(String, nullable=True)
+    user_organization_name_en = Column(String, nullable=True)
+    manager_oa_number = Column(String, nullable=True)
+    manager_name = Column(String, nullable=True)
+    manager_name_roma = Column(String, nullable=True)
+    manager_mailaddress = Column(String, nullable=True)
+    manager_company_code = Column(String, nullable=True)
+    manager_company_name = Column(String, nullable=True)
+    manager_company_name_en = Column(String, nullable=True)
+    manager_organization_code = Column(String, nullable=True)
+    manager_organization_name = Column(String, nullable=True)
+    manager_organization_name_en = Column(String, nullable=True)
+    dl_user_oa_number = Column(String, nullable=True)
+    dl_manager_oa_number = Column(String, nullable=True)
+    plan_name = Column(String, nullable=True)
+    unit_price = Column(Integer, nullable=True)
+    provided_cost_center_code = Column(String, nullable=True)
+    provided_cost_center_name = Column(String, nullable=True)
+    expense_details_code = Column(String, nullable=True)
+    expense_details_name = Column(String, nullable=True)
+
+    def __repr__(self):
+        return f"<ViewContractBasicInformation(contract_number='{self.contract_number}')>" 
