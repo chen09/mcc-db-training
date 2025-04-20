@@ -93,6 +93,7 @@ AS SELECT vabasicinfo.contract_number,
      JOIN mst_service_individual_temporary_master_rows device_type_candidate_row ON device_type_candidate_row.service_individual_temporary_master_id = ta_usb_device_registration.device_type_master_id AND device_type_candidate_row.master_column_id = ta_usb_device_registration.device_type_column_id AND device_type_candidate_row.id = ta_usb_device_registration.device_type_id AND device_type_candidate_row.row_language = vabasicinfo.language
      JOIN mst_service_individual_temporary_master_rows maker_name_candidate_row ON maker_name_candidate_row.service_individual_temporary_master_id = ta_usb_device_registration.maker_name_master_id AND maker_name_candidate_row.master_column_id = ta_usb_device_registration.maker_name_column_id AND maker_name_candidate_row.id = ta_usb_device_registration.maker_name_id AND maker_name_candidate_row.row_language = vabasicinfo.language
      JOIN mst_service_individual_temporary_master_rows model_name_candidate_row ON model_name_candidate_row.service_individual_temporary_master_id = ta_usb_device_registration.model_name_master_id AND model_name_candidate_row.master_column_id = ta_usb_device_registration.model_name_column_id AND model_name_candidate_row.id = ta_usb_device_registration.model_name_id AND model_name_candidate_row.row_language = vabasicinfo.language
+  WHERE vabasicinfo.service_id = 76
   ORDER BY vabasicinfo.contract_number, vabasicinfo.language;
   
   
