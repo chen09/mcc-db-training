@@ -9,4 +9,3 @@ from src.models.mst_messages import MstMessages
 from src.models.mst_organizations import MstOrganizations
 from src.models.mst_service_plans import MstServicePlans
 from src.models.mst_services import MstServices
-from src.models.usb_device import UsbDevice 

@@ -15,7 +15,7 @@ from src.models.mst_messages import MstMessages
 from src.models.mst_organizations import MstOrganizations
 from src.models.mst_service_plans import MstServicePlans
 from src.models.mst_services import MstServices
-from src.models.usb_device import ContractUsbDeviceRegistration
+from src.models.contract_usb_device_registration import ContractUsbDeviceRegistration
 from src.crud.contract import ContractCRUD
 from src.crud.usb_device import UsbDeviceCRUD
 from src.crud.organization import OrganizationCRUD

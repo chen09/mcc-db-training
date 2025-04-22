@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple, TypeVar, Generic, Type
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from src.models.usb_device import ContractUsbDeviceRegistration
+from sqlalchemy import func, select, and_, or_, desc
+from src.models.contract_usb_device_registration import ContractUsbDeviceRegistration
 
 T = TypeVar('T')
 

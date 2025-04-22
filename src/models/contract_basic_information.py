@@ -34,8 +34,5 @@ class ContractBasicInformation(ContractBase):
     invoice_address_company_code_id = Column(Integer, nullable=True)
     service_plan_id = Column(Integer, nullable=True)
 
-    # 关联USB设备注册表
-    usb_devices = relationship("ContractUsbDeviceRegistration", back_populates="contract")
-
     def __repr__(self):
         return f"<ContractBasicInformation(contract_number='{self.contract_number}')>" 
