@@ -1,1 +1,26 @@
-python db_import.py --model ContractBasicInformation --csv trn_contract_basic_information.csv --commit-interval 500
+# 契約基本情報のインポート
+python db_import.py --model ContractBasicInformation --csv src/csv/trn_contract_basic_information.csv --commit-interval 500
+
+# 契約権限付与情報のインポート
+python db_import.py --model ContractGrantPrivilege --csv src/csv/trn_contract_grant_privilege.csv --commit-interval 500
+
+# 契約情報管理者情報のインポート
+python db_import.py --model ContractInformationManagers --csv src/csv/trn_contract_information_managers.csv --commit-interval 500
+
+# 契約情報ユーザー情報のインポート
+python db_import.py --model ContractInformationUsers --csv src/csv/trn_contract_information_users.csv --commit-interval 500
+
+# USBデバイス情報のインポート
+python db_import.py --model ContractUsbDeviceRegistration --csv src/csv/trn_contract_usb_device_registration.csv --commit-interval 500
+
+# メッセージマスタのインポート
+python db_import.py --model MstMessages --csv src/csv/mst_messages.csv --commit-interval 500
+
+# 組織マスタのインポート
+python db_import.py --model MstOrganizations --csv src/csv/mst_organizations.csv --commit-interval 500
+
+# サービスプランマスタのインポート
+python db_import.py --model MstServicePlans --csv src/csv/mst_service_plans.csv --commit-interval 500
+
+# サービスマスタのインポート
+python db_import.py --model MstServices --csv src/csv/mst_services.csv --commit-interval 500
