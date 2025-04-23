@@ -114,19 +114,21 @@ def get_contract_information_managers_by_contract_number(session: Session, contr
     ).first()
 
 
-def get_contract_information_users_by_contract_number(session: Session, contract_number: str):
+def get_contract_information_users_by_contract_number(session: Session, contract_number: str, user_oa_number: str):
     """
-    契約番号で契約情報ユーザー情報を取得する
+    契約番号とユーザーOA番号で契約情報ユーザー情報を取得する
     
     Args:
         session: データベースセッション
         contract_number: 契約番号
+        user_oa_number: ユーザーOA番号
         
     Returns:
         契約情報ユーザー情報、またはNone（見つからない場合）
     """
     return session.query(ContractInformationUsers).filter(
-        ContractInformationUsers.contract_number == contract_number
+        ContractInformationUsers.contract_number == contract_number,
+        ContractInformationUsers.user_oa_number == user_oa_number
     ).first()
 
 
@@ -638,11 +640,10 @@ def import_contract_information_users_from_csv(session: Session, csv_file_path: 
                 updated_at = parse_date(row['updated_at'])
                 
                 # 既存のレコードを検索
-                existing_user = get_contract_information_users_by_contract_number(session, row['contract_number'])
+                existing_user = get_contract_information_users_by_contract_number(session, row['contract_number'], row['user_oa_number'])
                 
                 if existing_user:
                     # 既存のレコードを更新
-                    existing_user.user_oa_number = row['user_oa_number']
                     existing_user.user_department = row['user_department']
                     existing_user.user_phone = row['user_phone']
                     existing_user.created_at = created_at
