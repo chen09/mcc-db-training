@@ -24,3 +24,121 @@ python db_import.py --model MstServicePlans --csv src/csv/mst_service_plans.csv 
 
 # サービスマスタのインポート
 python db_import.py --model MstServices --csv src/csv/mst_services.csv --commit-interval 500
+
+
+
+
+
+-- 优化基础表索引
+CREATE INDEX idx_trn_contract_basic_filter ON trn_contract_basic_information 
+  (contract_status, bill_to_company_code, invoice_address_company_code)
+  INCLUDE (service_id, usage_start_date);
+
+-- 优化模糊查询索引（需pg_trgm扩展）
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX idx_company_code_gin ON mst_organizations USING gin (organization_code gin_trgm_ops);
+
+-- 优化物化视图索引
+CREATE INDEX idx_view_user_info_contract ON view_user_info (contract_number);
+CREATE INDEX idx_view_manager_info_contract ON view_manager_info (contract_number);
+
+
+
+
+查询重写优化（需验证）
+
+WITH ContractBase AS (
+  SELECT 
+    c.contract_number,
+    c.service_id,
+    c.usage_start_date,
+    c.bill_to_company_code,
+    c.invoice_address_company_code
+  FROM trn_contract_basic_information c
+  WHERE c.contract_status = 1
+    AND (
+      c.bill_to_company_code ~ '101' 
+      OR c.invoice_address_company_code ~ '101'
+    )
+),
+USBDevices AS (
+  SELECT 
+    r.*,
+    m1.master_value AS usb_device_usage_type,
+    m2.master_value AS usb_device_usage_reason,
+    m3.master_value AS device_type
+  FROM trn_contract_usb_device_registration r
+  JOIN mst_service_individual_temporary_master_rows m1 
+    ON r.usb_device_usage_type_id = m1.id
+    AND m1.row_language = 1
+  JOIN mst_service_individual_temporary_master_rows m2
+    ON r.usb_device_usage_reason_id = m2.id
+    AND m2.row_language = 1
+  JOIN mst_service_individual_temporary_master_rows m3
+    ON r.device_type_id = m3.id
+    AND m3.row_language = 1
+)
+SELECT 
+  -- 保持原字段列表
+FROM ContractBase cb
+JOIN USBDevices ud ON cb.contract_number = ud.contract_number
+LEFT JOIN view_user_info ui ON cb.contract_number = ui.contract_number
+LEFT JOIN view_manager_info mi ON cb.contract_number = mi.contract_number;
+
+
+
+
+-- 修改view_user_info为增量刷新（需要业务配合）
+CREATE UNIQUE INDEX idx_mv_user_info ON view_user_info (contract_number);
+ALTER MATERIALIZED VIEW view_user_info SET (autovacuum_enabled = on);
+
+-- 新增定期刷新策略（每天低峰期刷新）
+CREATE OR REPLACE FUNCTION refresh_user_info() RETURNS void AS $$
+BEGIN
+  REFRESH MATERIALIZED VIEW CONCURRENTLY view_user_info;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+2.4 表结构优化建议
+
+-- 在trn_contract_usb_device_registration表添加冗余字段
+ALTER TABLE trn_contract_usb_device_registration ADD COLUMN master_values_cache jsonb;
+
+-- 创建更新触发器
+CREATE OR REPLACE FUNCTION update_master_cache() RETURNS trigger AS $$
+BEGIN
+  NEW.master_values_cache = jsonb_build_object(
+    'usb_device_usage_type', (SELECT master_value FROM mst_service_individual_temporary_master_rows 
+                             WHERE id = NEW.usb_device_usage_type_id AND row_language = 1),
+    'usb_device_usage_reason', (SELECT master_value FROM mst_service_individual_temporary_master_rows 
+                               WHERE id = NEW.usb_device_usage_reason_id AND row_language = 1),
+    'device_type', (SELECT master_value FROM mst_service_individual_temporary_master_rows 
+                   WHERE id = NEW.device_type_id AND row_language = 1)
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_cache_master_values 
+BEFORE INSERT OR UPDATE ON trn_contract_usb_device_registration
+FOR EACH ROW EXECUTE FUNCTION update_master_cache();
+
+
+
+索引验证：
+EXPLAIN ANALYZE
+SELECT contract_number 
+FROM trn_contract_basic_information 
+WHERE contract_status = 1 
+  AND bill_to_company_code ~ '101';
+
+
+查询计划对比：
+-- 原始查询
+EXPLAIN ANALYZE <原查询语句>;
+
+-- 优化后查询
+EXPLAIN ANALYZE <优化后的查询>;
+
