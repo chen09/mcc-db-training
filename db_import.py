@@ -642,9 +642,8 @@ def import_contract_information_users_from_csv(session: Session, csv_file_path: 
                 
                 if existing_user:
                     # 既存のレコードを更新
-                    existing_user.user_id = row['user_id']
-                    existing_user.user_name = row['user_name']
-                    existing_user.user_email = row['user_email']
+                    existing_user.user_oa_number = row['user_oa_number']
+                    existing_user.user_department = row['user_department']
                     existing_user.user_phone = row['user_phone']
                     existing_user.created_at = created_at
                     existing_user.created_by = row['created_by']
@@ -660,9 +659,8 @@ def import_contract_information_users_from_csv(session: Session, csv_file_path: 
                     # 新しいレコードを作成
                     user = ContractInformationUsers(
                         contract_number=row['contract_number'],
-                        user_id=row['user_id'],
-                        user_name=row['user_name'],
-                        user_email=row['user_email'],
+                        user_oa_number=row['user_oa_number'],
+                        user_department=row['user_department'],
                         user_phone=row['user_phone'],
                         created_at=created_at,
                         created_by=row['created_by'],
