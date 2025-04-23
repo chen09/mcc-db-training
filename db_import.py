@@ -559,9 +559,8 @@ def import_contract_information_managers_from_csv(session: Session, csv_file_pat
                 
                 if existing_manager:
                     # 既存のレコードを更新
-                    existing_manager.manager_id = row['manager_id']
-                    existing_manager.manager_name = row['manager_name']
-                    existing_manager.manager_email = row['manager_email']
+                    existing_manager.manager_oa_number = row['manager_oa_number']
+                    existing_manager.manager_department = row['manager_department']
                     existing_manager.manager_phone = row['manager_phone']
                     existing_manager.created_at = created_at
                     existing_manager.created_by = row['created_by']
@@ -577,9 +576,8 @@ def import_contract_information_managers_from_csv(session: Session, csv_file_pat
                     # 新しいレコードを作成
                     manager = ContractInformationManagers(
                         contract_number=row['contract_number'],
-                        manager_id=row['manager_id'],
-                        manager_name=row['manager_name'],
-                        manager_email=row['manager_email'],
+                        manager_oa_number=row['manager_oa_number'],
+                        manager_department=row['manager_department'],
                         manager_phone=row['manager_phone'],
                         created_at=created_at,
                         created_by=row['created_by'],
